@@ -57,9 +57,11 @@
       padding: 16px;
       display: flex;
       align-items: center;
+      justify-content: center; /* Centralização horizontal */
       font-size: 16px;
       color: #333;
       border-bottom: 1px solid #eee;
+      text-align: center;
     }
 
     .status img {
@@ -73,6 +75,7 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      touch-action: pan-y;
     }
 
     .rg-image {
@@ -87,18 +90,6 @@
 
     .rg-image.active {
       display: block;
-    }
-
-    .invisible-button {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 40%;
-      height: 100%;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      z-index: 10;
     }
 
     .footer {
@@ -141,7 +132,6 @@
   <div class="image-area">
     <img id="imgFront" src="ViG4yKf.png" alt="Frente do RG" class="rg-image active">
     <img id="imgBack" src="r01tryF.png" alt="Verso do RG" class="rg-image">
-    <button class="invisible-button" onclick="toggleRG()"></button>
   </div>
 
   <div class="footer">
@@ -225,7 +215,27 @@
       }
     });
 
-    // ⬇️ PWA: Registro do Service Worker
+    // Swipe para trocar frente/verso
+    let startX = 0;
+
+    function handleTouchStart(evt) {
+      startX = evt.touches[0].clientX;
+    }
+
+    function handleTouchEnd(evt) {
+      const endX = evt.changedTouches[0].clientX;
+      const diff = endX - startX;
+
+      if (Math.abs(diff) > 50) {
+        toggleRG();
+      }
+    }
+
+    const imageArea = document.querySelector('.image-area');
+    imageArea.addEventListener('touchstart', handleTouchStart, false);
+    imageArea.addEventListener('touchend', handleTouchEnd, false);
+
+    // PWA: Registro do Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('✅ Service Worker registrado!'))
