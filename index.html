@@ -47,7 +47,7 @@
       color: #007aff;
       font-size: 16px;
       cursor: pointer;
-      width: 80px; /* largura fixa para simetria */
+      width: 80px;
       text-align: center;
     }
 
@@ -61,7 +61,7 @@
       padding: 16px;
       display: flex;
       align-items: center;
-      justify-content: center; /* Centraliza horizontalmente */
+      justify-content: center;
       font-size: 16px;
       color: #333;
       border-bottom: 1px solid #eee;
@@ -118,10 +118,52 @@
       opacity: 1;
       filter: hue-rotate(180deg);
     }
+
+    /* Tela de senha */
+    #senha-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #senha-container input {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    #senha-container button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    #mensagem-erro {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Tela de senha -->
+  <div id="senha-container">
+    <h2>Digite a senha para acessar</h2>
+    <input type="password" id="senha-input" placeholder="Senha">
+    <button onclick="verificarSenha()">Entrar</button>
+    <p id="mensagem-erro">Senha incorreta</p>
+  </div>
+
+  <!-- Conteúdo principal -->
   <div class="header">
     <div class="left">Fechar</div>
     <div class="center" id="title">Frente</div>
@@ -145,6 +187,18 @@
   </div>
 
   <script>
+    function verificarSenha() {
+      const senhaCorreta = "Emm270608.";
+      const input = document.getElementById('senha-input').value;
+      const erro = document.getElementById('mensagem-erro');
+
+      if (input === senhaCorreta) {
+        document.getElementById('senha-container').style.display = 'none';
+      } else {
+        erro.style.display = 'block';
+      }
+    }
+
     const title = document.getElementById('title');
     const imgFront = document.getElementById('imgFront');
     const imgBack = document.getElementById('imgBack');
@@ -219,7 +273,6 @@
       }
     });
 
-    // Swipe para trocar frente/verso
     let startX = 0;
 
     function handleTouchStart(evt) {
@@ -239,7 +292,6 @@
     imageArea.addEventListener('touchstart', handleTouchStart, false);
     imageArea.addEventListener('touchend', handleTouchEnd, false);
 
-    // PWA: Registro do Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('✅ Service Worker registrado!'))
