@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RG Digital</title>
+
+  <!-- PWA: Manifesto -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    body.fullscreen-enabled {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid #ccc;
+      font-weight: 500;
+      font-size: 18px;
+    }
+
+    .header .left,
+    .header .right {
+      color: #007aff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .header .center {
+      font-weight: bold;
+    }
+
+    .status {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+    }
+
+    .status img {
+      width: 20px;
+      margin-right: 8px;
+    }
+
+    .image-area {
+      height: calc(100vh - 174px); /* Ajustado para usar mais espaço da tela */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .rg-image {
+      max-height: 100%;
+      width: 100vw;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      display: none;
+    }
+
+    .rg-image.active {
+      display: block;
+    }
+
+    .invisible-button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 40%;
+      height: 100%;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      z-index: 10;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: white;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+
+    .footer img {
+      width: 28px;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    .footer img.active {
+      opacity: 1;
+      filter: hue-rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="left">Fechar</div>
+    <div class="center" id="title">Frente</div>
+    <div class="right">⋯</div>
+  </div>
+
+  <div class="status" id="updateStatus">
+    <img src="https://img.icons8.com/color/48/000000/ok--v1.png" alt="check">
+    Atualizando...
+  </div>
+
+  <div class="image-area">
+    <img id="imgFront" src="ViG4yKf.png" alt="Frente do RG" class="rg-image active">
+    <img id="imgBack" src="r01tryF.png" alt="Verso do RG" class="rg-image">
+    <button class="invisible-button" onclick="toggleRG()"></button>
+  </div>
+
+  <div class="footer">
+    <img src="https://img.icons8.com/ios-filled/50/user.png" id="icon-front" class="active" alt="frente">
+    <img src="https://img.icons8.com/ios-filled/50/fingerprint.png" id="btn-fullscreen" alt="fullscreen">
+    <img src="https://img.icons8.com/ios-filled/50/grid.png" alt="grid">
+  </div>
+
+  <script>
+    const title = document.getElementById('title');
+    const imgFront = document.getElementById('imgFront');
+    const imgBack = document.getElementById('imgBack');
+    const iconFront = document.getElementById('icon-front');
+    const updateStatus = document.getElementById('updateStatus');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+
+    let showingFront = true;
+
+    function toggleRG() {
+      showingFront = !showingFront;
+      imgFront.classList.toggle('active', showingFront);
+      imgBack.classList.toggle('active', !showingFront);
+      title.textContent = showingFront ? 'Frente' : 'Verso';
+      iconFront.classList.toggle('active', showingFront);
+    }
+
+    iconFront.addEventListener('click', () => {
+      showingFront = true;
+      imgFront.classList.add('active');
+      imgBack.classList.remove('active');
+      title.textContent = 'Frente';
+      iconFront.classList.add('active');
+    });
+
+    function atualizarDataHora() {
+      const agora = new Date();
+      const dia = String(agora.getDate()).padStart(2, '0');
+      const mes = String(agora.getMonth() + 1).padStart(2, '0');
+      const ano = agora.getFullYear();
+      const hora = String(agora.getHours()).padStart(2, '0');
+      const minutos = String(agora.getMinutes()).padStart(2, '0');
+      const texto = `Atualizado em ${dia}/${mes}/${ano} às ${hora}:${minutos}`;
+
+      updateStatus.innerHTML = `
+        <img src="https://img.icons8.com/color/48/000000/ok--v1.png" alt="check">
+        ${texto}
+      `;
+    }
+
+    atualizarDataHora();
+
+    btnFullscreen.addEventListener('click', () => {
+      const docElm = document.documentElement;
+
+      if (!document.fullscreenElement &&
+          !document.webkitFullscreenElement &&
+          !document.msFullscreenElement) {
+
+        if (docElm.requestFullscreen) {
+          docElm.requestFullscreen().catch(err => console.warn("Erro ao entrar em fullscreen:", err));
+        } else if (docElm.webkitRequestFullscreen) {
+          docElm.webkitRequestFullscreen();
+        } else if (docElm.msRequestFullscreen) {
+          docElm.msRequestFullscreen();
+        } else {
+          alert("Este navegador não suporta fullscreen.");
+        }
+
+        document.body.classList.add("fullscreen-enabled");
+
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+
+        document.body.classList.remove("fullscreen-enabled");
+      }
+    });
+
+    // ⬇️ PWA: Registro do Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('✅ Service Worker registrado!'))
+        .catch((err) => console.error('Erro no Service Worker:', err));
+    }
+  </script>
+
+</body>
+</html>
