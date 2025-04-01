@@ -47,9 +47,13 @@
       color: #007aff;
       font-size: 16px;
       cursor: pointer;
+      width: 80px; /* largura fixa para simetria */
+      text-align: center;
     }
 
     .header .center {
+      flex: 1;
+      text-align: center;
       font-weight: bold;
     }
 
@@ -57,7 +61,7 @@
       padding: 16px;
       display: flex;
       align-items: center;
-      justify-content: center; /* Centralização horizontal */
+      justify-content: center; /* Centraliza horizontalmente */
       font-size: 16px;
       color: #333;
       border-bottom: 1px solid #eee;
@@ -70,7 +74,7 @@
     }
 
     .image-area {
-      height: calc(100vh - 174px); /* Ajustado para usar mais espaço da tela */
+      height: calc(100vh - 174px);
       display: flex;
       justify-content: center;
       align-items: center;
